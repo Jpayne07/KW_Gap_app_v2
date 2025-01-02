@@ -30,6 +30,9 @@ h3 {
   text-decoration: underline;
 
 }
+button {
+  margin-top:20px;
+}
 .collaborator_grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -57,7 +60,17 @@ h3 {
     text-align: center;
     margin: 5px;
   }
-
+ .input-field  {
+    width: 100%;
+    text-align: center;
+    margin: 5px;
+  }
+  .collaborator_item button {
+    width: 100%;
+    text-align: center;
+    margin: 20px;
+  }
+ 
   .profileIcon {
     width: 100px; /* Adjust size as needed */
     height: 100px;
@@ -73,4 +86,8 @@ h3 {
     height: auto; /* Maintains the aspect ratio */
     display: block; /* Removes the bottom space/gap */
     object-fit: cover;
+  }
+
+  .form-wrapper {
+    width:200px;
   }

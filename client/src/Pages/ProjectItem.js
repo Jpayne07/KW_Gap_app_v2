@@ -7,6 +7,8 @@ function ProjectItem(){
     const [project, setProject] = useState(null); // Initialize as null to represent "no data" state
     const [loading, setLoading] = useState(true); // Add a loading state
     const [userCollaborations, setUserCollaborations] = useState([])
+    const [allCollaborators,  setAllCollaborators]=useState([])
+    
 
     function updateCollaborations(updatedCollaborations) {
       setUserCollaborations(updatedCollaborations);
@@ -31,6 +33,19 @@ function ProjectItem(){
         setLoading(false); // Stop loading on error
       });
   }, [id]);
+
+  useEffect(()=>{
+    fetch(`/api/projects_collaborators`)
+    .then(r=>r.json())
+    .then(data=>{
+      setAllCollaborators(data)
+        setLoading(false); // Stop loading once data is fetched
+  })
+  .catch((error) => {
+    console.error("Error fetching project:", error);
+    setLoading(false); // Stop loading on error
+  });
+}, [id]);
   
 
   if (loading) {
@@ -41,7 +56,12 @@ function ProjectItem(){
     return <div>No project found</div>; // Handle the case where the project is null or undefined
   }
 
-    return(<div><ProjectItemComponent singularProject = {project} collaborationsFromParent =  {userCollaborations} setCollaborations = {updateCollaborations}/></div>)
+    return(<div><ProjectItemComponent 
+      singularProject = {project} 
+      collaborationsFromParent =  {userCollaborations} 
+      setCollaborations = {updateCollaborations}
+      allCollaborators = {allCollaborators}
+      /></div>)
 }
 
 export default ProjectItem

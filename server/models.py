@@ -17,9 +17,9 @@ class User(db.Model, SerializerMixin):
     profile_icon = db.Column(db.String)
 
     #begin relationships
-    collaborations = db.relationship('ProjectCollaborators', back_populates = 'user')
+    collaborators = db.relationship('ProjectCollaborators', back_populates = 'user')
 
-    projects = association_proxy('collaborations', 'projects',
+    projects = association_proxy('collaborators', 'projects',
             creator=lambda project_obj: ProjectCollaborators(projects = project_obj))
     
     # keywords = association_proxy('projects', 'keywords',
@@ -50,7 +50,7 @@ class User(db.Model, SerializerMixin):
 
     
     #begin serializing
-    serialize_rules = ('-projects', '-_password_hash','-collaborations.user')
+    serialize_rules = ('-projects', '-_password_hash','-collaborators.user')
 
 
 class Project(db.Model, SerializerMixin):
@@ -60,10 +60,10 @@ class Project(db.Model, SerializerMixin):
     logo = db.Column(db.String)
     brand_name = db.Column(db.String, nullable = False)
 
-    collaborators = db.relationship('ProjectCollaborators', back_populates = 'projects')
+    collaborations = db.relationship('ProjectCollaborators', back_populates = 'project')
     # keywords = db.relationship('Keywords', back_populates = 'project')
-    serialize_rules = ('users','-collaborators.projects')
-    users = association_proxy('collaborators', 'user',
+    serialize_rules = ('-users','-collaborations.project')
+    users = association_proxy('collaborations', 'user',
             creator=lambda users_obj: ProjectCollaborators(user = users_obj))
 
 
@@ -75,9 +75,9 @@ class ProjectCollaborators(db.Model, SerializerMixin):
     role = db.Column(db.String, nullable=False)
     
 
-    user = db.relationship('User', back_populates = 'collaborations')
-    projects = db.relationship('Project', back_populates = 'collaborators')
-    serialize_rules = ('-user','-projects',)
+    user = db.relationship('User', back_populates = 'collaborators')
+    project = db.relationship('Project', back_populates = 'collaborations')
+    serialize_rules = ('-project.collaborations','user', '-user.collaborators')
     __table_args__ = (
         UniqueConstraint('user_id', 'project_id', name='uq_user_project'),
     )

@@ -138,9 +138,14 @@ class ProjectCollaborator(Resource):
         return (response)
     
 class ProjectCollaboratorItem(Resource):
+    def get(self, id):
+        collaborators = ProjectCollaborators.query.filter_by(id=id).first()
+        response = make_response(collaborators.to_dict(), 200)
+        return response
+
     def patch(self, id):
         data = request.get_json()
-        collaborator = ProjectCollaborators.query.filter_by(id=id).first()
+        collaborator = ProjectCollaborators.query.filter_by(id==id).first()
         for attr in data:
             setattr(collaborator, attr, data[attr])
         db.session.commit()
@@ -148,7 +153,7 @@ class ProjectCollaboratorItem(Resource):
         #to do - add patch for adding collaborators
         response = make_response(collaborator.to_dict(), 200)
         return response
-class ProjectCollaboratorItem(Resource):
+
     def delete(self, id):
         collaborator = ProjectCollaborators.query.filter_by(id=id).first()
         db.session.delete(collaborator)
