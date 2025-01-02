@@ -14,7 +14,12 @@ function ProjectItem(){
       setUserCollaborations(updatedCollaborations);
   }
 
-    // console.log(userCollaborations)
+  function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+    );
+  }
 
     useEffect(()=>{
         fetch(`/api/projects/${id}`)
@@ -61,6 +66,7 @@ function ProjectItem(){
       collaborationsFromParent =  {userCollaborations} 
       setCollaborations = {updateCollaborations}
       allCollaborators = {allCollaborators}
+      toTitleCase = {toTitleCase}
       /></div>)
 }
 

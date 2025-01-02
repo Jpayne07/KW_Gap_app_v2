@@ -140,6 +140,7 @@ class ProjectCollaborator(Resource):
 class ProjectCollaboratorItem(Resource):
     def get(self, id):
         collaborators = ProjectCollaborators.query.filter_by(id=id).first()
+        print(collaborators)
         response = make_response(collaborators.to_dict(), 200)
         return response
 

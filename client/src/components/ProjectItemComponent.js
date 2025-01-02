@@ -1,30 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../index.css"
 import DeleteCollaborators from "./DeleteCollaborators";
 import { Formik, Field, Form } from 'formik';
 
 
 
-function SingleProjectComponent({singularProject, collaborationsFromParent, allCollaborators}){
+function SingleProjectComponent({singularProject, collaborationsFromParent, allCollaborators, toTitleCase}){
     const [isFormVisible, setIsFormVisible] = useState(false)
+    const [collaboratorsv2, setCollaboratorsv2] = useState([])
     const[projectUsers, setProjectUsers] = useState(singularProject.users)
     const[newCollabUsername, setNewCollabUsername] = useState('')
     const[newCollabRole, setNewCollabRole] = useState('')
-    const existingUserIds = singularProject.collaborators.map(item => item.user_id);
-    const ac = allCollaborators.filter(item => !existingUserIds.includes(item.user_id));
 
-    console.log(ac)
-    function toTitleCase(str) {
-        return str.replace(
-          /\w\S*/g,
-          text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
-        );
-      }
+   
+
+    const existingUserIds = singularProject.collaborations.map(item => item.user_id);
+    const nonPresentCollaborators = allCollaborators.filter(item => !existingUserIds.includes(item.user_id));
+    const thisProjectCollaborators = allCollaborators.filter(item=>item.project_id!==singularProject.id)
+    const thisitem = new Set(thisProjectCollaborators.map(collaborator=>(collaborator.user.username)))
+    console.log(thisitem)
+    useEffect(() => {
+        const collabHolder = singularProject.collaborations.map(collaborator => collaborator.user);
+        setCollaboratorsv2(collabHolder);
+    }, [singularProject.collaborations]);
+    
       function handleDelete(collaborations){
-        console.log(collaborationsFromParent)
-        const test = (collaborations.filter(collab =>{return collab.project_id===singularProject.id}))
-        console.log(test)
-        fetch(`/api/projects_collaborators/${test[0].id}`,{
+        const collaborationToDelete = (collaborations.filter(collab =>{return collab.project_id===singularProject.id}))
+        fetch(`/api/projects_collaborators/${collaborationToDelete[0].id}`,{
             method:'DELETE',
         })
         .then(response => {
@@ -33,7 +35,7 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
                 console.error('Error response:', response.status, response.statusText);
                 throw new Error('Failed to delete collaboration');
             }
-            setProjectUsers(projectUsers.filter(user=>user.id !== test[0].user_id))
+            setCollaboratorsv2(collaboratorsv2.filter(user=>user.id !== collaborationToDelete[0].user_id))
             return response;  // Only call .json() if the response is OK
         })
         .then(r => {
@@ -49,26 +51,25 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
         console.log(isFormVisible)
     };
 
-    function handleAdd(collaborations){
-        fetch(`/api/projects_collaborators/${test[0].id}`,{
-            method:'POST',
-        })
-        .then(response => {
-            if (!response.ok) {
-                // If the response is not OK, log the status and throw an error
-                console.error('Error response:', response.status, response.statusText);
-                throw new Error('Failed to add new collaborator');
-            }
-            // setProjectUsers()
-            return response.json();  // Only call .json() if the response is OK
-        })
-        .then(r => {
-            console.log('Collaboration deleted:', r);
-        })
-        .catch(error => {
-            console.error('Error deleting collaboration:', error);
-        });
-    }
+    // function handleAdd(collaborations){
+    //     fetch(`/api/projects_collaborators/${test[0].id}`,{
+    //         method:'POST',
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             // If the response is not OK, log the status and throw an error
+    //             console.error('Error response:', response.status, response.statusText);
+    //             throw new Error('Failed to add new collaborator');
+    //         }
+    //         return response.json();  // Only call .json() if the response is OK
+    //     })
+    //     .then(r => {
+    //         console.log('Collaboration deleted:', r);
+    //     })
+    //     .catch(error => {
+    //         console.error('Error deleting collaboration:', error);
+    //     });
+    // }
     return (
         <div>
             <div className="main_wrapper">
@@ -76,19 +77,17 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
                 <h3>Collaborators</h3>
                 {/* Grid starts below */}
                 <div className="collaborator_grid">
-                    {projectUsers.map(user=>{
+                    {collaboratorsv2.map(user=>{
                         return <div className="collaborator_item" key={user.username}>
-                                    <p>{toTitleCase(`${user.username}: `)}</p>
-                                        <p>{user.collaborations
-                                        .filter((collaboration) => collaboration.project_id === singularProject.id)
-                                        .map((collaboration) => (toTitleCase((collaboration.role))))
-                                        .join(", ")}
-                                    </p>
-                                    <div className = "profileIcon"
-                                    style={{ backgroundImage: `url(${user.profile_icon})` }}>
-                                    </div>
-                                    <button onClick={()=>handleDelete(user.collaborations)}>Delete Collaborator</button>
-                                             
+                                <p>{toTitleCase(`${user.username}: `)}</p>
+                                <p>{user.collaborators.filter((collaboration) => 
+                                    collaboration.project_id === singularProject.id)
+                                    .map((collaboration) => (toTitleCase((collaboration.role))))
+                                    .join(", ")}
+                                </p>
+                                <div className = "profileIcon" style={{ backgroundImage: `url(${user.profile_icon})` }}>
+                                </div>
+                                <button onClick={()=>handleDelete(user.collaborators)}>Delete Collaborator</button>  
                                 </div>  
                     })}
                    
@@ -112,7 +111,7 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
                                             <Form>
                                                 <label htmlFor="username">Username</label>
                                                 <Field as="select" id="username" name="username" className = "input-field" >
-                                                    {ac.map(item=><option label={item.username}>{item.username}</option>)}
+                                                    {['select a user',...thisitem].map(item=><option label={item}>{item}</option>)}
                                                 </Field>
 
                                                 <label htmlFor="role">Role</label>

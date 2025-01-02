@@ -77,7 +77,7 @@ class ProjectCollaborators(db.Model, SerializerMixin):
 
     user = db.relationship('User', back_populates = 'collaborators')
     project = db.relationship('Project', back_populates = 'collaborations')
-    serialize_rules = ('-project.collaborations','user', '-user.collaborators')
+    serialize_rules = ('-project.collaborations','user', '-user.collaborators.project')
     __table_args__ = (
         UniqueConstraint('user_id', 'project_id', name='uq_user_project'),
     )
