@@ -3,8 +3,8 @@ import "../index.css"
 import DeleteCollaborators from "./DeleteCollaborators";
 
 
-function SingleProjectComponent({singularProject, collaborations}){
-    console.log(collaborations)
+function SingleProjectComponent({singularProject, collaborationsFromParent, setCollaborations}){
+    const[projectUsers, setProjectUsers] = useState(singularProject.users)
     function toTitleCase(str) {
         return str.replace(
           /\w\S*/g,
@@ -12,7 +12,9 @@ function SingleProjectComponent({singularProject, collaborations}){
         );
       }
       function handleDelete(collaborations){
+        console.log(collaborationsFromParent)
         const test = (collaborations.filter(collab =>{return collab.project_id===singularProject.id}))
+        console.log(test)
         fetch(`/api/projects_collaborators/${test[0].id}`,{
             method:'DELETE',
         })
@@ -22,6 +24,7 @@ function SingleProjectComponent({singularProject, collaborations}){
                 console.error('Error response:', response.status, response.statusText);
                 throw new Error('Failed to delete collaboration');
             }
+            setProjectUsers(projectUsers.filter(user=>user.id !== test[0].user_id))
             return response;  // Only call .json() if the response is OK
         })
         .then(r => {
@@ -38,7 +41,7 @@ function SingleProjectComponent({singularProject, collaborations}){
                 <h3>Collaborators</h3>
                 {/* Grid starts below */}
                 <div className="collaborator_grid">
-                    {singularProject.users.map(user=>{
+                    {projectUsers.map(user=>{
                         return <div className="collaborator_item" key={user.username}>
                                     <p>{toTitleCase(`${user.username}: `)}</p>
                                         <p>{user.collaborations
