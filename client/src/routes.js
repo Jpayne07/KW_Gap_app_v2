@@ -2,7 +2,7 @@ import React from "react";
 // import Login from "./pages/Login";
 import Home from "./Pages/ProjectList";
 import ProjectList from "./Pages/ProjectList";
-import ProjectItem from "./Pages/ProjectItem";
+import ProjectItemv2 from "./Pages/ProjectItemv2";
 // import Signup from "./pages/Signup";
 // import ProjectComponent from "./pages/ProjectAggregate"; // Correct import
 // import IndividualProjectPage from "./pages/IndividualProjectPage";
@@ -25,7 +25,7 @@ const routes = [
     },
     {   
         path: "/projects/:id",
-        element: <ProjectItem />,
+        element: <ProjectItemv2 />,
         // errorElement: <ErrorPage/>
     }
     // {   

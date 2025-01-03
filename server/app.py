@@ -146,8 +146,12 @@ class ProjectCollaboratorItem(Resource):
 
     def patch(self, id):
         data = request.get_json()
-        collaborator = ProjectCollaborators.query.filter_by(id==id).first()
+        print(id)
+        collaborator = ProjectCollaborators.query.filter_by(id=id).first()
+        print(data)
+        print(collaborator)
         for attr in data:
+            print(attr)
             setattr(collaborator, attr, data[attr])
         db.session.commit()
         

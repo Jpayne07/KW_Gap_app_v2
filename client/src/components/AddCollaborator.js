@@ -1,11 +1,8 @@
 import React from "react";
 import { Formik, Field, Form } from 'formik';
 
-function AddCollaborator({collaboratorsv2, allCollaborators, setCollaboratorsv2, singularProject}){
-    console.log(singularProject.id)
-    console.log('test', collaboratorsv2)
-    const thisProjectCollaborators = allCollaborators.filter(item=>item.project_id!==singularProject.id)
-    const thisitem = new Set(thisProjectCollaborators.map(collaborator=>(collaborator.user.username)))
+function AddCollaborator({collaboratorsv2, collaborations, setCollaboratorsv2, singularProject}){
+    const thisitem = new Set(collaborations.map(collaborator=>(collaborator.user.username)))
     const thisitemID = thisProjectCollaborators.map(collaborator=>(collaborator.user))
     
     
@@ -29,7 +26,7 @@ function AddCollaborator({collaboratorsv2, allCollaborators, setCollaboratorsv2,
             
             const findUserCollaborations = collaboratorsv2.filter(item=>item.id = new_user_idd)
             
-            fetch(`http://localhost:5555/api/projects_collaborators`,{
+            fetch('/api/projects_collaborators',{
                         method:'POST',
                         headers: {
                             'Content-Type': 'application/json',

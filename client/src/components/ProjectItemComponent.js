@@ -13,7 +13,7 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
 
     useEffect(() => {
         const collabHolder = singularProject.collaborations.map(collaborator => collaborator.user);
-        setCollaboratorsv2(collabHolder);
+        setCollaboratorsv2(collabHolder)
     }, [singularProject.collaborations]);
     
       function handleDelete(collaborations){
@@ -53,11 +53,11 @@ function SingleProjectComponent({singularProject, collaborationsFromParent, allC
                 toTitleCase = {toTitleCase}
                 singularProject = {singularProject}
                 handleDelete = {handleDelete}
+                allCollaborators = {allCollaborators} 
                 />
                 <button onClick={toggleFormVisibility}>Add Collaborator</button>   
                 {isFormVisible&& (<AddCollaborator allCollaborators = {allCollaborators} singularProject = {singularProject}  collaboratorsv2 = {collaboratorsv2} setCollaboratorsv2 = {setCollaboratorsv2}/>)}
-                {/* <button onClick={toggleFormVisibility}>Add Collaborator</button>   
-                {isFormVisible&& (<AddCollaborator allCollaborators = {allCollaborators} singularProject = {singularProject}  collaboratorsv2 = {collaboratorsv2} setCollaboratorsv2 = {setCollaboratorsv2}/>)} */}
+               
             </div>
         </div>
     )
