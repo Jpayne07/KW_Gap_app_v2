@@ -25,13 +25,12 @@ function ProjectItem(){
         fetch(`/api/projects/${id}`)
         .then(r=>r.json())
         .then(data=>{
+            console.log(data)
             setProject(data)
             setLoading(false); // Stop loading once data is fetched
-          const collabs = data.users.map(user=>{
-          return user.collaborations.filter(item=>item.project_id ===parseInt(id))
-        })
+          
 
-          setUserCollaborations(collabs.flat())
+          setUserCollaborations(data.collaborations)
       })
       .catch((error) => {
         console.error("Error fetching project:", error);
